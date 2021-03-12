@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div id="dados">
+
+        </div>
+        <div>
+            <table>
+                <thead>
+                <th>Descrição</th>
+                <th>Preço</th>
+                <th>Quantidade</th>
+                </thead>
+                <tbody id="produtos">
+
+                </tbody>
+            </table>
+        </div>
+
+        <button onclick="loadDoc()">Carregar</button>
+        <button onclick="loadFetch()">Carregar Fetch</button>
+
+        <script>
+
+
+            function loadDoc() {
+                var xhttp = new XMLHttpRequest();
+
+                xhttp.open("GET", "http://localhost:8080/RestAPI/webresources/produtos", true);
+                xhttp.send();
+
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState === 4 && this.status === 200) {
+                        document.getElementById("dados").innerHTML = this.responseText;
+                    }
+                };
+            }
+
+            function loadFetch() {
+                fetch("http://localhost:8080/RestAPI/webresources/produtos")
+                        .then(x => x.text())
+                        .then(y => {
+                            mostraDados(y)
+                        });
+            }
+
+            function mostraDados(dados) {
+                document.getElementById("dados").innerHTML = dados;
+                //converter para array de objetos javascript
+                var obj2 = JSON.parse(dados);
+                var text = "";
+                for (var ob in obj2) {
+                    text += "<tr>";
+                    text += "<td>" + obj2[ob].descricao + "</td>";
+                    text += "<td>" + obj2[ob].preco + "</td>";
+                    text += "<td>" + obj2[ob].estoque + "</td>";
+                    text += "</tr>";
+                }
+
+                document.getElementById("produtos").innerHTML = text;               
+
+            }
+        </script>
+    </body>
+</html>
