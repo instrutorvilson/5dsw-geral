@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <style>
+            .cadastro{
+                width: 30%;
+                margin-left: auto;
+                margin-right: auto;              
+            }
+            input[type=text]{
+                width: 100%;
+                margin-bottom: 20px;
+                border-radius: 10px;
+                padding: 10px;
+            }
+
+            .dados{                
+                width: 30%;
+                margin-right: auto;              
+            }
+
+        </style>
+
+        <script>
+            $(document).ready(function () {
+                //consultar dados
+                $("#search").click(function () {
+                    $.get("http://localhost:8080/RestAPI/webresources/produtos", function (data, status) {
+                        display(data);
+                    });
+                });
+
+                //gravar dados
+                $("#gravar").click(function () {
+                    var payload = {
+                        descricao: $("#descricao").val(),
+                        preco: $("#preco").val(),
+                        estoque: $("#estoque").val()
+                    };
+
+                    payload = JSON.stringify(payload);
+
+                    $.ajax({
+                        type: "POST",
+                        url: "http://localhost:8080/RestAPI/webresources/produtos",
+                        data: payload,
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data, status) {
+                            alert('inserido com sucesso ');
+                        }
+                    });
+                });
+            });
+
+        </script>
+        <script>
+             //usando jSON
+            $(document).ready(function () {
+                $("#gravar_post").click(function () {
+                    debugger;
+                    var payload = JSON.stringify({
+                        descricao: $("#descricao").val(),
+                        preco: $("#preco").val(),
+                        estoque: $("#estoque").val()
+                    });
+
+                   
+                    $.post({
+                            url: "http://localhost:8080/RestAPI/webresources/produtos",
+                            data: payload,
+                            dataType: 'json',
+                            contentType: "application/json; charset=utf-8"
+                            }).done(function (data, status) {
+                                alert("Data: " + data + "\nStatus: " + status);
+                            });                          
+                });
+            });
+        </script>
+    
+</head>
+<body>
+    <div class="cadastro">
+        <input type="text" id="descricao" placeholder="Informe descrição do produto" />
+        <input type="text" id="preco" placeholder="Informe preço do produto" />
+        <input type="text" id="estoque" placeholder="Informe estoque do produto" />
+        <input type="button" id="gravar" value="Gravar com ajax" />
+        <input type="button" id="gravar_post" value="Gravar com post" />
+        <label id="result"></label>
+    </div>
+
+    <hr />
+    <div id="dados"> 
+        <input type="button" id="search" value="Carregar" />
+        <table>
+            <thead>
+            <th>Codigo</th>
+            <th>Descrição</th>
+            <th>Preço</th>
+            <th>Quantidade</th>
+            </thead>
+            <tbody id="produtos">
+
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function display(dados) {
+            var text = "";
+            for (ob in dados) {
+                text += "<tr>";
+                text += "<td>" + dados[ob].id + "</td>";
+                text += "<td>" + dados[ob].descricao + "</td>";
+                text += "<td>" + dados[ob].preco + "</td>";
+                text += "<td>" + dados[ob].estoque + "</td>";
+                text += "</tr>";
+            }
+            document.getElementById("produtos").innerHTML = text;
+        }
+    </script>
+</body>
+</html>
