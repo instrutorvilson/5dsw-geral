@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            #dados{
+                margin-top: 50px;
+            }
+        </style>
+    </head>
+    <body>
+        
+        <div>
+            <input type="text" name="descricao" placeholder="Informe descrição do produto" />
+            <input type="text" name="preco" placeholder="Informe preço do produto" />
+            <input type="text" name="estoque" placeholder="Informe estoque do produto" />
+            <input type="button" onclick="gravar()" value="Gravar" />
+            <label id="result"></label>
+        </div>
+        
+        <div id="dados"> 
+            <input type="text" name="filtro" placeholder="informe parte da descriçaõ do produto"/>
+            <input type="button" onclick="loadDoc()" value="Carregar" />
+            <table>
+                <thead>
+                <th>Descrição</th>
+                <th>Preço</th>
+                <th>Quantidade</th>
+                </thead>
+                <tbody id="produtos">
+
+                </tbody>
+            </table>
+        </div>
+        
+       
+        <script>
+            var xhttp = new XMLHttpRequest();
+            function loadDoc() {
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState === 4 && this.status === 200) {
+                         display(this.responseText);
+                    }
+                };
+                xhttp.open("GET", "http://localhost:8080/RestAPI/webresources/produtos", true);
+                xhttp.send();
+            }
+            
+            function gravar() {
+                var dados = {
+                             descricao: document.getElementsByName("descricao")[0].value,
+                             preco: document.getElementsByName("preco")[0].value,
+                             estoque: document.getElementsByName("estoque")[0].value
+                           };
+                var json = JSON.stringify(dados);       
+                
+                xhttp.open("POST", "http://localhost:8080/RestAPI/webresources/produtos", true);
+                xhttp.setRequestHeader("Content-Type", "application/json");
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState === 4 && this.status === 200) {
+                        document.getElementById("result").innerHTML = this.responseText;
+                    }
+                };                
+                xhttp.send(json);
+            }
+            
+            
+            function display(dados){
+               // document.getElementById("dados").innerHTML = dados;
+               // var obj = JSON.parse(dados);                
+               // document.getElementById("objetos").innerHTML = obj;
+               var obj = JSON.parse(dados); 
+               var text="";
+               for (var ob in obj) {
+                    text += "<tr>";
+                    text += "<td>" + obj[ob].descricao + "</td>";
+                    text += "<td>" + obj[ob].preco + "</td>";
+                    text += "<td>" + obj[ob].estoque + "</td>";
+                    text += "</tr>";
+                }
+                document.getElementById("produtos").innerHTML = text;
+            }
+        </script>
+    </body>
+</html>
